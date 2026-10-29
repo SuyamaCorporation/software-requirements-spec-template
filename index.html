@@ -1,0 +1,434 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ソフトウェア 要件定義書 テンプレ</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100 min-h-screen">
+  <header class="bg-violet-700 text-white px-6 py-4">
+    <h1 class="text-xl font-bold">ソフトウェア 要件定義書 テンプレ</h1>
+    <p class="text-sm text-violet-200 mt-1">SRS標準セクションをフォームで入力 → Markdownをリアルタイムプレビュー・コピー</p>
+  </header>
+
+  <main class="max-w-7xl mx-auto px-4 py-6 grid grid-cols-1 lg:grid-cols-2 gap-6">
+    <!-- 左ペイン: 入力フォーム -->
+    <section aria-label="入力フォーム" class="flex flex-col gap-4 overflow-y-auto max-h-[calc(100vh-120px)]">
+
+      <!-- ヘッダ情報 -->
+      <div class="bg-white rounded-xl shadow p-4 flex flex-col gap-3">
+        <h2 class="font-semibold text-gray-700 border-b pb-2">ドキュメントヘッダ</h2>
+        <div class="grid grid-cols-1 gap-3">
+          <div class="flex flex-col gap-1">
+            <label class="text-sm font-medium text-gray-700" for="f-project-name">プロジェクト名 *</label>
+            <input id="f-project-name" type="text" class="border border-gray-300 rounded px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-violet-500" placeholder="例: 在庫管理システム" aria-required="true" />
+          </div>
+          <div class="grid grid-cols-2 gap-3">
+            <div class="flex flex-col gap-1">
+              <label class="text-sm font-medium text-gray-700" for="f-version">バージョン</label>
+              <input id="f-version" type="text" class="border border-gray-300 rounded px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-violet-500" placeholder="1.0.0" />
+            </div>
+            <div class="flex flex-col gap-1">
+              <label class="text-sm font-medium text-gray-700" for="f-date">日付</label>
+              <input id="f-date" type="date" class="border border-gray-300 rounded px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-violet-500" />
+            </div>
+          </div>
+          <div class="flex flex-col gap-1">
+            <label class="text-sm font-medium text-gray-700" for="f-author">作成者</label>
+            <input id="f-author" type="text" class="border border-gray-300 rounded px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-violet-500" placeholder="担当者名" />
+          </div>
+        </div>
+      </div>
+
+      <!-- 1. 目的 -->
+      <div class="bg-white rounded-xl shadow p-4 flex flex-col gap-3">
+        <h2 class="font-semibold text-gray-700">1. 目的</h2>
+        <textarea id="f-purpose" rows="3" class="border border-gray-300 rounded px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-violet-500 resize-y" placeholder="このシステム・ソフトウェアが解決する問題・達成する目標を記述します"></textarea>
+      </div>
+
+      <!-- 2. スコープ -->
+      <div class="bg-white rounded-xl shadow p-4 flex flex-col gap-3">
+        <h2 class="font-semibold text-gray-700">2. スコープ</h2>
+        <div class="flex flex-col gap-2">
+          <label class="text-sm font-medium text-gray-700" for="f-scope-in">スコープ内（含む）</label>
+          <textarea id="f-scope-in" rows="2" class="border border-gray-300 rounded px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-violet-500 resize-y" placeholder="例: ユーザー認証・在庫登録・レポート出力"></textarea>
+          <label class="text-sm font-medium text-gray-700" for="f-scope-out">スコープ外（除く）</label>
+          <textarea id="f-scope-out" rows="2" class="border border-gray-300 rounded px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-violet-500 resize-y" placeholder="例: 会計システム連携・モバイルアプリ"></textarea>
+        </div>
+      </div>
+
+      <!-- 3. 用語定義 -->
+      <div class="bg-white rounded-xl shadow p-4 flex flex-col gap-3">
+        <div class="flex items-center justify-between">
+          <h2 class="font-semibold text-gray-700">3. 用語定義</h2>
+          <button id="btn-add-term" class="text-xs px-3 py-1 bg-violet-100 text-violet-700 rounded hover:bg-violet-200 focus:outline-none focus:ring-2 focus:ring-violet-500" aria-label="用語を追加">+ 追加</button>
+        </div>
+        <div id="terms-list" class="flex flex-col gap-2"></div>
+      </div>
+
+      <!-- 4. 機能要件 -->
+      <div class="bg-white rounded-xl shadow p-4 flex flex-col gap-3">
+        <div class="flex items-center justify-between">
+          <h2 class="font-semibold text-gray-700">4. 機能要件</h2>
+          <button id="btn-add-req" class="text-xs px-3 py-1 bg-violet-100 text-violet-700 rounded hover:bg-violet-200 focus:outline-none focus:ring-2 focus:ring-violet-500" aria-label="機能要件を追加">+ 追加</button>
+        </div>
+        <div id="req-list" class="flex flex-col gap-2"></div>
+      </div>
+
+      <!-- 5. 非機能要件 -->
+      <div class="bg-white rounded-xl shadow p-4 flex flex-col gap-3">
+        <h2 class="font-semibold text-gray-700">5. 非機能要件</h2>
+        <div class="flex flex-col gap-2">
+          <label class="text-sm font-medium text-gray-700" for="f-nf-perf">性能</label>
+          <textarea id="f-nf-perf" rows="2" class="border border-gray-300 rounded px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-violet-500 resize-y" placeholder="例: APIレスポンスタイム 95パーセンタイル 200ms以内"></textarea>
+          <label class="text-sm font-medium text-gray-700" for="f-nf-avail">可用性</label>
+          <textarea id="f-nf-avail" rows="2" class="border border-gray-300 rounded px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-violet-500 resize-y" placeholder="例: 稼働率 99.9%以上（月次）・RTO 4時間・RPO 1時間"></textarea>
+          <label class="text-sm font-medium text-gray-700" for="f-nf-sec">セキュリティ</label>
+          <textarea id="f-nf-sec" rows="2" class="border border-gray-300 rounded px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-violet-500 resize-y" placeholder="例: OWASP Top 10対応・通信はTLS 1.2以上・認証はJWT"></textarea>
+        </div>
+      </div>
+
+      <!-- 6. 制約 -->
+      <div class="bg-white rounded-xl shadow p-4 flex flex-col gap-3">
+        <h2 class="font-semibold text-gray-700">6. 制約</h2>
+        <textarea id="f-constraints" rows="3" class="border border-gray-300 rounded px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-violet-500 resize-y" placeholder="技術制約・法規制・予算・スケジュール等"></textarea>
+      </div>
+
+      <!-- 7. 外部インターフェース -->
+      <div class="bg-white rounded-xl shadow p-4 flex flex-col gap-3">
+        <h2 class="font-semibold text-gray-700">7. 外部インターフェース</h2>
+        <textarea id="f-interfaces" rows="3" class="border border-gray-300 rounded px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-violet-500 resize-y" placeholder="外部API・連携システム・ハードウェアI/F等"></textarea>
+      </div>
+
+      <div class="flex gap-2 pb-4">
+        <button id="btn-save" class="px-4 py-2 bg-violet-600 text-white rounded hover:bg-violet-700 focus:outline-none focus:ring-2 focus:ring-violet-500 text-sm" aria-label="LocalStorageに保存">保存</button>
+        <button id="btn-load-sample" class="px-4 py-2 bg-gray-200 text-gray-700 rounded hover:bg-gray-300 focus:outline-none focus:ring-2 focus:ring-gray-400 text-sm" aria-label="サンプルデータを読み込む">サンプル</button>
+        <button id="btn-clear" class="px-4 py-2 bg-red-100 text-red-600 rounded hover:bg-red-200 focus:outline-none focus:ring-2 focus:ring-red-400 text-sm" aria-label="全フィールドをクリア">クリア</button>
+      </div>
+    </section>
+
+    <!-- 右ペイン: プレビュー -->
+    <section aria-label="Markdownプレビュー" class="flex flex-col gap-4">
+      <div class="bg-white rounded-xl shadow p-4 flex flex-col gap-3 h-full">
+        <div class="flex items-center justify-between">
+          <h2 class="font-semibold text-gray-700">Markdown プレビュー</h2>
+          <button id="btn-copy-md" class="text-xs px-3 py-1 bg-green-100 text-green-700 rounded hover:bg-green-200 focus:outline-none focus:ring-2 focus:ring-green-500" aria-label="Markdownをクリップボードにコピー">コピー</button>
+        </div>
+        <pre id="md-preview" class="text-xs font-mono bg-gray-50 border border-gray-200 rounded p-3 overflow-auto flex-1 whitespace-pre-wrap" aria-live="polite" aria-label="Markdown出力" style="min-height:400px;max-height:calc(100vh - 200px)"></pre>
+      </div>
+    </section>
+  </main>
+
+  <script>
+    const STORAGE_KEY = 'srs-template-v1';
+    let termCount = 0;
+    let reqCount = 0;
+
+    function el(id) { return document.getElementById(id); }
+
+    function addTerm(term = '', def = '') {
+      termCount++;
+      const idx = termCount;
+      const div = document.createElement('div');
+      div.className = 'flex gap-2 items-start';
+      div.dataset.termIdx = idx;
+
+      const termInput = document.createElement('input');
+      termInput.type = 'text';
+      termInput.value = term;
+      termInput.placeholder = '用語';
+      termInput.className = 'border border-gray-300 rounded px-2 py-1 text-sm flex-1 focus:outline-none focus:ring-2 focus:ring-violet-500';
+      termInput.setAttribute('aria-label', '用語' + idx);
+
+      const defInput = document.createElement('input');
+      defInput.type = 'text';
+      defInput.value = def;
+      defInput.placeholder = '定義';
+      defInput.className = 'border border-gray-300 rounded px-2 py-1 text-sm flex-2 w-2/3 focus:outline-none focus:ring-2 focus:ring-violet-500';
+      defInput.setAttribute('aria-label', '定義' + idx);
+
+      const delBtn = document.createElement('button');
+      delBtn.textContent = '×';
+      delBtn.className = 'text-gray-400 hover:text-red-500 focus:outline-none focus:ring-2 focus:ring-red-400 px-1';
+      delBtn.setAttribute('aria-label', '用語' + idx + 'を削除');
+      delBtn.addEventListener('click', () => { div.remove(); updatePreview(); });
+
+      termInput.addEventListener('input', updatePreview);
+      defInput.addEventListener('input', updatePreview);
+
+      div.appendChild(termInput);
+      div.appendChild(defInput);
+      div.appendChild(delBtn);
+      el('terms-list').appendChild(div);
+      updatePreview();
+    }
+
+    function addReq(id = '', text = '') {
+      reqCount++;
+      const idx = reqCount;
+      const div = document.createElement('div');
+      div.className = 'flex gap-2 items-start';
+
+      const idInput = document.createElement('input');
+      idInput.type = 'text';
+      idInput.value = id;
+      idInput.placeholder = 'FR-' + String(idx).padStart(3, '0');
+      idInput.className = 'border border-gray-300 rounded px-2 py-1 text-sm w-24 font-mono focus:outline-none focus:ring-2 focus:ring-violet-500';
+      idInput.setAttribute('aria-label', '要件ID ' + idx);
+
+      const textInput = document.createElement('input');
+      textInput.type = 'text';
+      textInput.value = text;
+      textInput.placeholder = '機能要件の内容';
+      textInput.className = 'border border-gray-300 rounded px-2 py-1 text-sm flex-1 focus:outline-none focus:ring-2 focus:ring-violet-500';
+      textInput.setAttribute('aria-label', '要件内容 ' + idx);
+
+      const delBtn = document.createElement('button');
+      delBtn.textContent = '×';
+      delBtn.className = 'text-gray-400 hover:text-red-500 focus:outline-none focus:ring-2 focus:ring-red-400 px-1';
+      delBtn.setAttribute('aria-label', '要件' + idx + 'を削除');
+      delBtn.addEventListener('click', () => { div.remove(); updatePreview(); });
+
+      idInput.addEventListener('input', updatePreview);
+      textInput.addEventListener('input', updatePreview);
+
+      div.appendChild(idInput);
+      div.appendChild(textInput);
+      div.appendChild(delBtn);
+      el('req-list').appendChild(div);
+      updatePreview();
+    }
+
+    function getTerms() {
+      return Array.from(el('terms-list').children).map(div => {
+        const inputs = div.querySelectorAll('input');
+        return { term: inputs[0].value, def: inputs[1].value };
+      }).filter(t => t.term.trim());
+    }
+
+    function getReqs() {
+      return Array.from(el('req-list').children).map(div => {
+        const inputs = div.querySelectorAll('input');
+        return { id: inputs[0].value, text: inputs[1].value };
+      }).filter(r => r.text.trim());
+    }
+
+    function buildMarkdown() {
+      const projectName = el('f-project-name').value.trim() || '(プロジェクト名未入力)';
+      const version = el('f-version').value.trim() || '1.0.0';
+      const date = el('f-date').value || new Date().toISOString().split('T')[0];
+      const author = el('f-author').value.trim() || '';
+
+      const lines = [];
+      lines.push('# ' + projectName + ' — ソフトウェア要件定義書 (SRS)');
+      lines.push('');
+      lines.push('| 項目 | 内容 |');
+      lines.push('|------|------|');
+      lines.push('| バージョン | ' + version + ' |');
+      lines.push('| 日付 | ' + date + ' |');
+      if (author) lines.push('| 作成者 | ' + author + ' |');
+      lines.push('');
+
+      // 1
+      lines.push('## 1. 目的');
+      lines.push('');
+      const purpose = el('f-purpose').value.trim();
+      lines.push(purpose || '*(未入力)*');
+      lines.push('');
+
+      // 2
+      lines.push('## 2. スコープ');
+      lines.push('');
+      const scopeIn = el('f-scope-in').value.trim();
+      const scopeOut = el('f-scope-out').value.trim();
+      lines.push('**スコープ内:**');
+      lines.push(scopeIn || '*(未入力)*');
+      lines.push('');
+      lines.push('**スコープ外:**');
+      lines.push(scopeOut || '*(未入力)*');
+      lines.push('');
+
+      // 3
+      lines.push('## 3. 用語定義');
+      lines.push('');
+      const terms = getTerms();
+      if (terms.length === 0) {
+        lines.push('*(用語定義なし)*');
+      } else {
+        lines.push('| 用語 | 定義 |');
+        lines.push('|------|------|');
+        terms.forEach(t => lines.push('| ' + t.term + ' | ' + t.def + ' |'));
+      }
+      lines.push('');
+
+      // 4
+      lines.push('## 4. 機能要件');
+      lines.push('');
+      const reqs = getReqs();
+      if (reqs.length === 0) {
+        lines.push('*(機能要件なし)*');
+      } else {
+        reqs.forEach((r, i) => {
+          const id = r.id.trim() || ('FR-' + String(i + 1).padStart(3, '0'));
+          lines.push((i + 1) + '. **' + id + '**: ' + r.text);
+        });
+      }
+      lines.push('');
+
+      // 5
+      lines.push('## 5. 非機能要件');
+      lines.push('');
+      const perf = el('f-nf-perf').value.trim();
+      const avail = el('f-nf-avail').value.trim();
+      const sec = el('f-nf-sec').value.trim();
+      lines.push('### 5.1 性能');
+      lines.push(perf || '*(未入力)*');
+      lines.push('');
+      lines.push('### 5.2 可用性');
+      lines.push(avail || '*(未入力)*');
+      lines.push('');
+      lines.push('### 5.3 セキュリティ');
+      lines.push(sec || '*(未入力)*');
+      lines.push('');
+
+      // 6
+      lines.push('## 6. 制約');
+      lines.push('');
+      lines.push(el('f-constraints').value.trim() || '*(未入力)*');
+      lines.push('');
+
+      // 7
+      lines.push('## 7. 外部インターフェース');
+      lines.push('');
+      lines.push(el('f-interfaces').value.trim() || '*(未入力)*');
+      lines.push('');
+
+      return lines.join('\n');
+    }
+
+    function updatePreview() {
+      el('md-preview').textContent = buildMarkdown();
+      saveToLS();
+    }
+
+    function saveToLS() {
+      const data = {
+        projectName: el('f-project-name').value,
+        version: el('f-version').value,
+        date: el('f-date').value,
+        author: el('f-author').value,
+        purpose: el('f-purpose').value,
+        scopeIn: el('f-scope-in').value,
+        scopeOut: el('f-scope-out').value,
+        terms: getTerms(),
+        reqs: getReqs(),
+        nfPerf: el('f-nf-perf').value,
+        nfAvail: el('f-nf-avail').value,
+        nfSec: el('f-nf-sec').value,
+        constraints: el('f-constraints').value,
+        interfaces: el('f-interfaces').value,
+      };
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+    }
+
+    function loadData(data) {
+      el('f-project-name').value = data.projectName || '';
+      el('f-version').value = data.version || '';
+      el('f-date').value = data.date || '';
+      el('f-author').value = data.author || '';
+      el('f-purpose').value = data.purpose || '';
+      el('f-scope-in').value = data.scopeIn || '';
+      el('f-scope-out').value = data.scopeOut || '';
+      el('f-nf-perf').value = data.nfPerf || '';
+      el('f-nf-avail').value = data.nfAvail || '';
+      el('f-nf-sec').value = data.nfSec || '';
+      el('f-constraints').value = data.constraints || '';
+      el('f-interfaces').value = data.interfaces || '';
+      el('terms-list').innerHTML = '';
+      termCount = 0;
+      (data.terms || []).forEach(t => addTerm(t.term, t.def));
+      el('req-list').innerHTML = '';
+      reqCount = 0;
+      (data.reqs || []).forEach(r => addReq(r.id, r.text));
+      updatePreview();
+    }
+
+    // event listeners
+    ['f-project-name','f-version','f-date','f-author','f-purpose','f-scope-in','f-scope-out',
+     'f-nf-perf','f-nf-avail','f-nf-sec','f-constraints','f-interfaces'].forEach(id => {
+      el(id).addEventListener('input', updatePreview);
+    });
+
+    el('btn-add-term').addEventListener('click', () => addTerm());
+    el('btn-add-req').addEventListener('click', () => addReq());
+
+    el('btn-save').addEventListener('click', () => {
+      saveToLS();
+      const btn = el('btn-save');
+      const orig = btn.textContent;
+      btn.textContent = '保存済';
+      setTimeout(() => { btn.textContent = orig; }, 1500);
+    });
+
+    el('btn-copy-md').addEventListener('click', () => {
+      navigator.clipboard.writeText(buildMarkdown()).then(() => {
+        const btn = el('btn-copy-md');
+        const orig = btn.textContent;
+        btn.textContent = 'コピー済';
+        setTimeout(() => { btn.textContent = orig; }, 1500);
+      });
+    });
+
+    el('btn-clear').addEventListener('click', () => {
+      ['f-project-name','f-version','f-date','f-author','f-purpose','f-scope-in','f-scope-out',
+       'f-nf-perf','f-nf-avail','f-nf-sec','f-constraints','f-interfaces'].forEach(id => {
+        el(id).value = '';
+      });
+      el('terms-list').innerHTML = '';
+      el('req-list').innerHTML = '';
+      termCount = 0; reqCount = 0;
+      localStorage.removeItem(STORAGE_KEY);
+      updatePreview();
+    });
+
+    el('btn-load-sample').addEventListener('click', () => {
+      loadData({
+        projectName: '在庫管理システム',
+        version: '1.0.0',
+        date: new Date().toISOString().split('T')[0],
+        author: '田中 太郎',
+        purpose: '中小製造業の在庫管理業務をデジタル化し、手作業による在庫誤差を年間90%削減する。Excel管理からの脱却と在庫一元管理の実現が主目的。',
+        scopeIn: 'ユーザー認証・商品マスタ管理・入出庫登録・在庫照会・月次レポート出力',
+        scopeOut: '会計システム連携・EC在庫同期・モバイルアプリ・バーコードスキャン',
+        terms: [
+          { term: 'SKU', def: '在庫最小管理単位（Stock Keeping Unit）' },
+          { term: '安全在庫', def: '欠品防止のための最低在庫数量' },
+        ],
+        reqs: [
+          { id: 'FR-001', text: 'ユーザーはメールアドレスとパスワードでログインできる' },
+          { id: 'FR-002', text: '管理者は商品マスタ（SKU/名称/単位/安全在庫）を登録・編集・削除できる' },
+          { id: 'FR-003', text: 'ユーザーは入庫・出庫の記録を日付・数量・担当者込みで登録できる' },
+          { id: 'FR-004', text: 'システムはリアルタイムで現在庫数を計算・表示する' },
+          { id: 'FR-005', text: '在庫が安全在庫を下回った場合アラートメールを送信する' },
+        ],
+        nfPerf: 'APIレスポンスタイム: 95パーセンタイル 200ms以内（同時接続50ユーザー）\n検索クエリ: 100万件データで3秒以内',
+        nfAvail: '稼働率: 99.5%以上（月次）\nRTO: 4時間 / RPO: 1時間\n計画メンテナンス: 月1回・深夜2〜4時',
+        nfSec: 'OWASP Top 10対応\n通信: TLS 1.2以上\n認証: JWT（有効期限24h）\nパスワード: bcrypt（cost 12）\n監査ログ: 全操作を90日保存',
+        constraints: '- 予算: 開発費500万円以内\n- スケジュール: 2026-12-31リリース\n- インフラ: AWSを使用\n- 言語規制: 個人情報保護法・GDPR',
+        interfaces: '- メール送信: SendGrid API v3\n- 認証: 自社SSOとOAuth 2.0連携\n- 将来: 会計ソフト連携API（v2で実装予定）',
+      });
+    });
+
+    // restore from localStorage
+    const saved = localStorage.getItem(STORAGE_KEY);
+    if (saved) {
+      try { loadData(JSON.parse(saved)); } catch {}
+    } else {
+      el('f-date').value = new Date().toISOString().split('T')[0];
+      el('f-version').value = '1.0.0';
+      updatePreview();
+    }
+  </script>
+</body>
+</html>
